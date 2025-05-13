@@ -1,0 +1,16 @@
+{
+  "name": "archcollab-pwa",
+  "version": "1.0.0",
+  "description": "Architecture Collaboration PWA",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve .",
+    "generate-icons": "node generate-icons.js"
+  },
+  "dependencies": {
+    "serve": "^14.2.1"
+  },
+  "devDependencies": {
+    "sharp": "^0.32.6"
+  }
+} 

@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Architecture Collaboration App - Preview</title>
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#007AFF">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="ArchCollab">
+    <link rel="apple-touch-icon" href="/icons/icon-152x152.png">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 390px;
+            height: 844px;
+            margin: 20px auto;
+            background: white;
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            padding: 16px;
+            background: white;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #000;
+            margin-bottom: 16px;
+        }
+
+        .tabs {
+            display: flex;
+            margin-top: 8px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .tab.active {
+            border-bottom-color: #007AFF;
+            color: #007AFF;
+            font-weight: 600;
+        }
+
+        .content {
+            height: calc(100% - 120px);
+            overflow-y: auto;
+        }
+
+        .canvas-container {
+            padding: 16px;
+            background: #fff;
+            height: 100%;
+            position: relative;
+        }
+
+        .canvas {
+            width: 100%;
+            height: 70%;
+            border: 1px solid #ccc;
+            border-radius: 12px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .grid {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: 20px 20px;
+            background-image: linear-gradient(to right, #f0f0f0 1px, transparent 1px),
+                            linear-gradient(to bottom, #f0f0f0 1px, transparent 1px);
+        }
+
+        .furniture {
+            position: absolute;
+            background: rgba(0, 122, 255, 0.4);
+            border: 1px solid #007AFF;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: #007AFF;
+            cursor: move;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .button {
+            padding: 8px 16px;
+            background: #007AFF;
+            color: white;
+            border-radius: 8px;
+            border: none;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .budget-container {
+            padding: 16px;
+        }
+
+        .budget-summary {
+            background: #F2F2F7;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .budget-category {
+            margin-bottom: 16px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #E9E9EB;
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 8px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #007AFF;
+            border-radius: 4px;
+        }
+
+        .recommendations-container {
+            padding: 16px;
+        }
+
+        .recommendation-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .color-palette {
+            display: flex;
+            gap: 8px;
+            margin: 8px 0;
+        }
+
+        .color-swatch {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .confidence-bar {
+            height: 4px;
+            background: #E0E0E0;
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .confidence-fill {
+            height: 100%;
+            background: #34C759;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Design Studio</h1>
+            <div class="tabs">
+                <div class="tab active" onclick="switchTab('design')">Design</div>
+                <div class="tab" onclick="switchTab('budget')">Budget</div>
+                <div class="tab" onclick="switchTab('recommendations')">Recommendations</div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div id="design-tab" class="canvas-container">
+                <div class="canvas">
+                    <div class="grid"></div>
+                    <div class="furniture" style="width: 80px; height: 40px; left: 40px; top: 60px;">Sofa</div>
+                    <div class="furniture" style="width: 40px; height: 40px; left: 140px; top: 80px;">Chair</div>
+                    <div class="furniture" style="width: 60px; height: 30px; left: 200px; top: 70px;">Table</div>
+                </div>
+                <div class="controls">
+                    <button class="button" onclick="toggleGrid()">Toggle Grid</button>
+                    <button class="button" onclick="toggleZoom()">Zoom In/Out</button>
+                </div>
+            </div>
+
+            <div id="budget-tab" class="budget-container" style="display: none;">
+                <div class="budget-summary">
+                    <div>
+                        <div style="color: #666;">Total Budget</div>
+                        <div style="font-size: 18px; font-weight: 600;">$25,000</div>
+                    </div>
+                    <div>
+                        <div style="color: #666;">Status</div>
+                        <div style="font-size: 18px; font-weight: 600; color: #34C759;">Within Budget</div>
+                    </div>
+                    <div>
+                        <div style="color: #666;">Remaining</div>
+                        <div style="font-size: 18px; font-weight: 600;">$4,500</div>
+                    </div>
+                </div>
+
+                <div class="budget-category">
+                    <div style="display: flex; justify-content: space-between;">
+                        <div>Furniture</div>
+                        <div>$10,000</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 40%;"></div>
+                    </div>
+                </div>
+
+                <div class="budget-category">
+                    <div style="display: flex; justify-content: space-between;">
+                        <div>Decor</div>
+                        <div>$5,000</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 20%;"></div>
+                    </div>
+                </div>
+
+                <div class="budget-category">
+                    <div style="display: flex; justify-content: space-between;">
+                        <div>Materials</div>
+                        <div>$7,500</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 30%;"></div>
+                    </div>
+                </div>
+
+                <div class="budget-category">
+                    <div style="display: flex; justify-content: space-between;">
+                        <div>Labor</div>
+                        <div>$2,500</div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: 10%;"></div>
+                    </div>
+                </div>
+
+                <button class="button" style="width: 100%; margin-top: 16px;">Optimize Budget</button>
+            </div>
+
+            <div id="recommendations-tab" class="recommendations-container" style="display: none;">
+                <div class="recommendation-card">
+                    <h3>Harmonious Color Palette</h3>
+                    <p style="color: #666; margin: 8px 0;">Based on your preferences</p>
+                    <div class="color-palette">
+                        <div class="color-swatch" style="background: #FFFFFF;"></div>
+                        <div class="color-swatch" style="background: #000000;"></div>
+                        <div class="color-swatch" style="background: #808080;"></div>
+                        <div class="color-swatch" style="background: #A0A0A0;"></div>
+                    </div>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" style="width: 85%;"></div>
+                    </div>
+                    <div style="text-align: right; font-size: 12px; color: #666; margin-top: 4px;">85% Match</div>
+                </div>
+
+                <div class="recommendation-card">
+                    <h3>Modern Style Elements</h3>
+                    <p style="color: #666; margin: 8px 0;">Matches your preferences</p>
+                    <ul style="margin-left: 20px; color: #666;">
+                        <li>Clean lines</li>
+                        <li>Minimalist furniture</li>
+                        <li>Neutral color palette</li>
+                    </ul>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" style="width: 90%;"></div>
+                    </div>
+                    <div style="text-align: right; font-size: 12px; color: #666; margin-top: 4px;">90% Match</div>
+                </div>
+
+                <div class="recommendation-card">
+                    <h3>Optimal Furniture Layout</h3>
+                    <p style="color: #666; margin: 8px 0;">Maximizes space utilization and flow</p>
+                    <div style="height: 120px; background: #F5F5F5; border-radius: 8px; margin: 8px 0; display: flex; align-items: center; justify-content: center;">
+                        Layout Preview
+                    </div>
+                    <div class="confidence-bar">
+                        <div class="confidence-fill" style="width: 75%;"></div>
+                    </div>
+                    <div style="text-align: right; font-size: 12px; color: #666; margin-top: 4px;">75% Match</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchTab(tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`.tab:nth-child(${tab === 'design' ? 1 : tab === 'budget' ? 2 : 3})`).classList.add('active');
+            
+            document.getElementById('design-tab').style.display = tab === 'design' ? 'block' : 'none';
+            document.getElementById('budget-tab').style.display = tab === 'budget' ? 'block' : 'none';
+            document.getElementById('recommendations-tab').style.display = tab === 'recommendations' ? 'block' : 'none';
+        }
+
+        function toggleGrid() {
+            const grid = document.querySelector('.grid');
+            grid.style.display = grid.style.display === 'none' ? 'block' : 'none';
+        }
+
+        let zoomed = false;
+        function toggleZoom() {
+            const canvas = document.querySelector('.canvas');
+            zoomed = !zoomed;
+            canvas.style.transform = zoomed ? 'scale(1.5)' : 'scale(1)';
+            canvas.style.transformOrigin = 'center';
+        }
+
+        // Make furniture draggable
+        document.querySelectorAll('.furniture').forEach(el => {
+            el.addEventListener('mousedown', e => {
+                const furniture = e.target;
+                let startX = e.clientX - furniture.offsetLeft;
+                let startY = e.clientY - furniture.offsetTop;
+
+                function mousemove(e) {
+                    furniture.style.left = e.clientX - startX + 'px';
+                    furniture.style.top = e.clientY - startY + 'px';
+                }
+
+                function mouseup() {
+                    document.removeEventListener('mousemove', mousemove);
+                    document.removeEventListener('mouseup', mouseup);
+                }
+
+                document.addEventListener('mousemove', mousemove);
+                document.addEventListener('mouseup', mouseup);
+            });
+        });
+
+        // Service Worker Registration
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/sw.js')
+                    .then(registration => {
+                        console.log('ServiceWorker registration successful');
+                    })
+                    .catch(err => {
+                        console.log('ServiceWorker registration failed: ', err);
+                    });
+            });
+        }
+    </script>
+</body>
+</html> 
