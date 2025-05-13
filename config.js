@@ -1,0 +1,3 @@
+export const config = {
+    CLAUDE_API_KEY: 'your-api-key-here' // Replace with your actual Claude API key
+}; 
