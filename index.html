@@ -8,12 +8,13 @@
     <meta http-equiv="Expires" content="0">
     <title>ArchConnect AI - Interior Design Assistant</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, system-ui, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
         }
 
         :root {
@@ -44,294 +45,264 @@
             position: relative;
             overflow: hidden;
             border-radius: 40px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
         }
 
-        .initial-screen {
+        /* Landing Page Styles */
+        .landing-page {
             height: 100%;
             display: flex;
             flex-direction: column;
-            padding: 48px 32px;
             position: relative;
             background: linear-gradient(180deg, rgba(76, 255, 201, 0.05) 0%, rgba(10, 11, 15, 0) 100%);
-            opacity: 1;
-            transition: opacity 0.3s ease;
         }
 
-        .chat-interface {
+        .portfolio-showcase {
             height: 100%;
-            display: none;
-            flex-direction: column;
-            padding: 48px 32px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .welcome-content {
             position: relative;
-            z-index: 1;
-            margin-top: 48px;
+            overflow: hidden;
         }
 
-        .headline {
-            font-size: 48px;
-            font-weight: 700;
-            line-height: 1.1;
-            margin-bottom: 16px;
-            letter-spacing: -0.02em;
-        }
-
-        .v0-block {
-            font-size: 16px;
-            color: rgba(255,255,255,0.6);
-            margin-bottom: 64px;
-            font-weight: 500;
-        }
-
-        .welcome-text {
-            font-size: 64px;
-            font-weight: 700;
-            line-height: 1.1;
-            letter-spacing: -0.02em;
-        }
-
-        .controls-container {
+        .showcase-slide {
             position: absolute;
             top: 0;
-            right: 32px;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            background-size: cover;
+            background-position: center;
+            padding: 48px 32px;
             display: flex;
             flex-direction: column;
-            gap: 24px;
-            padding-top: 48px;
+            justify-content: flex-end;
+        }
+
+        .showcase-slide.active {
+            opacity: 1;
+        }
+
+        .showcase-content {
+            background: rgba(10, 11, 15, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 24px;
+            border-radius: 24px;
+            margin-bottom: 32px;
+        }
+
+        .showcase-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--accent-color);
+        }
+
+        .showcase-description {
+            font-size: 16px;
+            line-height: 1.5;
+            margin-bottom: 16px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .cta-button {
+            width: 100%;
+            padding: 16px 32px;
+            background: var(--accent-color);
+            color: var(--dark-bg);
+            border: none;
+            border-radius: 16px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--glow);
+        }
+
+        /* Navigation Dots */
+        .showcase-nav {
+            position: absolute;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
             z-index: 10;
         }
 
-        .control-button {
-            width: 56px;
-            height: 56px;
+        .nav-dot {
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            border: none;
+            background: rgba(255, 255, 255, 0.3);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot.active {
+            background: var(--accent-color);
+            transform: scale(1.2);
+        }
+
+        /* Chat Interface Styles */
+        .chat-interface {
+            display: none;
+            height: 100%;
+            flex-direction: column;
+            background: var(--dark-bg);
+        }
+
+        .chat-header {
+            padding: 24px;
+            background: rgba(16, 18, 27, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
-            justify-content: center;
+            gap: 16px;
+        }
+
+        .back-button {
+            background: transparent;
+            border: none;
+            color: var(--accent-color);
             cursor: pointer;
-            transition: all 0.3s ease;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            padding: 8px;
+            margin: -8px;
         }
 
-        .control-button:hover {
-            background: rgba(255, 255, 255, 0.15);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        .chat-title {
+            font-size: 20px;
+            font-weight: 600;
         }
 
-        .control-button:active {
-            transform: translateY(0);
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .control-button svg {
-            width: 24px;
-            height: 24px;
-            fill: var(--text-color);
-            transition: all 0.3s ease;
-        }
-
-        .control-button:hover svg {
-            fill: var(--accent-color);
-            transform: scale(1.1);
-        }
-
-        .room-option {
-            background: rgba(255,255,255,0.1);
-            border: 1px solid rgba(255,255,255,0.2);
-            border-radius: 16px;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            color: var(--text-color);
-            font-size: 16px;
-            font-weight: 500;
-            text-align: left;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-        }
-
-        .room-option:hover {
-            border-color: var(--accent-color);
-            box-shadow: var(--glow);
-            transform: translateY(-2px);
-        }
-
-        .room-option:active {
-            transform: translateY(0);
-        }
-
-        .room-option.selected {
-            background: var(--accent-color);
-            border-color: var(--accent-color);
-            color: var(--dark-bg);
-            transform: translateY(-2px);
-        }
-
-        .design-view {
-            height: 100%;
+        .chat-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
             display: flex;
             flex-direction: column;
+            gap: 24px;
         }
 
-        .design-header {
-            padding: 20px;
+        .message {
+            max-width: 85%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .ai-message {
+            align-self: flex-start;
             background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .design-tags {
-            display: flex;
-            gap: 8px;
-            margin-top: 12px;
-        }
-
-        .design-tag {
-            background: var(--accent-color);
-            color: var(--dark-bg);
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        .design-tabs {
-            display: flex;
-            gap: 16px;
-            margin-top: 16px;
-            padding: 0 20px;
-        }
-
-        .design-tab {
-            color: rgba(255, 255, 255, 0.6);
-            padding: 8px 0;
-            border-bottom: 2px solid transparent;
-            cursor: pointer;
-        }
-
-        .design-tab.active {
-            color: var(--text-color);
-            border-bottom-color: var(--accent-color);
-        }
-
-        .design-canvas {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.05);
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .generate-button {
-            background: var(--accent-color);
-            color: var(--dark-bg);
-            border: none;
-            padding: 12px 24px;
-            border-radius: 24px;
-            font-weight: 600;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: var(--glow-shadow);
-        }
-
-        .canvas-controls {
-            position: absolute;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: rgba(16, 18, 27, 0.8);
-            backdrop-filter: blur(10px);
-            padding: 8px;
-            border-radius: 16px;
-            display: flex;
-            gap: 8px;
-        }
-
-        .control-button {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            color: var(--text-color);
-            cursor: pointer;
-        }
-
-        .brightness-control {
-            padding: 20px;
-            background: var(--card-bg);
-        }
-
-        .brightness-slider {
-            width: 100%;
-            height: 4px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 2px;
-            position: relative;
-        }
-
-        .brightness-fill {
-            position: absolute;
-            left: 0;
-            top: 0;
-            height: 100%;
-            background: var(--accent-color);
-            border-radius: 2px;
-            width: 50%;
-        }
-
-        .design-insights {
-            margin: 20px;
-            padding: 20px;
-            background: var(--card-bg);
-            border-radius: 16px;
+            padding: 16px;
+            border-radius: 20px 20px 20px 4px;
             border: 1px solid var(--border-color);
         }
 
-        .insight-title {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-bottom: 12px;
-            color: var(--accent-color);
+        .user-message {
+            align-self: flex-end;
+            background: var(--accent-color);
+            color: var(--dark-bg);
+            padding: 16px;
+            border-radius: 20px 20px 4px 20px;
         }
 
-        .insight-actions {
-            display: flex;
-            gap: 12px;
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
             margin-top: 16px;
+            width: 100%;
         }
 
-        .insight-button {
+        .option-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .option-card:hover {
+            background: rgba(76, 255, 201, 0.1);
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        .option-card.selected {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+            color: var(--dark-bg);
+        }
+
+        .option-icon {
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .option-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .option-description {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .chat-input {
+            padding: 24px;
+            background: rgba(16, 18, 27, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 16px;
+        }
+
+        .input-field {
             flex: 1;
-            padding: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
             border-radius: 12px;
-            border: 1px solid var(--accent-color);
-            background: transparent;
-            color: var(--accent-color);
+            padding: 12px 16px;
+            color: var(--text-color);
+            font-size: 16px;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+
+        .send-button {
+            width: 48px;
+            height: 48px;
+            border-radius: 12px;
+            background: var(--accent-color);
+            border: none;
+            color: var(--dark-bg);
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
-            transition: all 0.3s;
+            transition: all 0.3s ease;
         }
 
-        .insight-button:hover {
-            background: var(--accent-color);
-            color: var(--dark-bg);
+        .send-button:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--glow);
         }
 
         @keyframes fadeIn {
@@ -348,240 +319,176 @@
 </head>
 <body>
     <div class="container">
-        <!-- Initial Screen -->
-        <div class="initial-screen" id="initial-screen">
-            <div class="welcome-content">
-                <h1 class="headline">I can design your dream space</h1>
-                <div class="v0-block">v0 block</div>
-                <h2 class="welcome-text">What Can I Do<br>for<br>You Today?</h2>
+        <!-- Landing Page -->
+        <div class="landing-page" id="landing-page">
+            <div class="portfolio-showcase" id="portfolio-showcase">
+                <div class="showcase-slide active" style="background-image: url('https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80');">
+                    <div class="showcase-content">
+                        <h2 class="showcase-title">Modern Living Room</h2>
+                        <p class="showcase-description">Clean lines and natural light create a perfect balance of comfort and style in this contemporary space.</p>
+                        <button class="cta-button" onclick="startDesignJourney()">
+                            <span class="material-icons">brush</span>
+                            Design Your Space
+                        </button>
+                    </div>
+                </div>
+                <!-- More showcase slides will be added dynamically -->
             </div>
-            <div class="controls-container">
-                <button class="control-button" onclick="startChat()">
-                    <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
-                </button>
-                <button class="control-button">
-                    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></svg>
-                </button>
-                <button class="control-button">
-                    <svg viewBox="0 0 24 24"><path d="M20 5H4c-1.1 0-1.99.9-1.99 2L2 17c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 3h2v2h-2V8zm0 3h2v2h-2v-2zM8 8h2v2H8V8zm0 3h2v2H8v-2zm-1 2H5v-2h2v2zm0-3H5V8h2v2zm9 7H8v-2h8v2zm0-4h-2v-2h2v2zm0-3h-2V8h2v2zm3 3h-2v-2h2v2zm0-3h-2V8h2v2z"/></svg>
-                </button>
+            <div class="showcase-nav">
+                <div class="nav-dot active"></div>
+                <div class="nav-dot"></div>
+                <div class="nav-dot"></div>
             </div>
         </div>
 
         <!-- Chat Interface -->
         <div class="chat-interface" id="chat-interface">
             <div class="chat-header">
-                <button class="back-button" onclick="showInitialScreen()">
-                    <svg viewBox="0 0 24 24"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z"/></svg>
+                <button class="back-button" onclick="showLandingPage()">
+                    <span class="material-icons">arrow_back</span>
                 </button>
-                <div class="header-content">
-                    <h1>ArchConnect AI</h1>
-                    <p>Interior Design Assistant</p>
-                </div>
+                <div class="chat-title">Design Assistant</div>
             </div>
-            <div class="chat-content">
-                <p>Hi! I'm your ArchConnect AI assistant. I'll help you design your dream interior. What room would you like to start with?</p>
-                <div class="room-options">
-                    <button class="room-option" onclick="selectRoom('living')">Living Room</button>
-                    <button class="room-option" onclick="selectRoom('bedroom')">Bedroom</button>
-                    <button class="room-option" onclick="selectRoom('kitchen')">Kitchen</button>
-                    <button class="room-option" onclick="selectRoom('bathroom')">Bathroom</button>
-                    <button class="room-option" onclick="selectRoom('office')">Office</button>
-                </div>
+            <div class="chat-content" id="chat-content">
+                <!-- Messages will be added here dynamically -->
             </div>
-        </div>
-
-        <!-- Design Visualization -->
-        <div class="design-view" id="design-view" style="display: none;">
-            <header class="design-header">
-                <button class="back-button">
-                    <i class="material-icons">arrow_back</i>
+            <div class="chat-input">
+                <input type="text" class="input-field" placeholder="Type your message..." id="user-input">
+                <button class="send-button">
+                    <span class="material-icons">send</span>
                 </button>
-                <h1 class="title">Design Visualization</h1>
-                <div class="design-tags">
-                    <span class="design-tag">Modern</span>
-                    <span class="design-tag">Living Room</span>
-                </div>
-            </header>
-
-            <div class="design-tabs">
-                <div class="design-tab active">View</div>
-                <div class="design-tab">Furniture</div>
-                <div class="design-tab">Materials</div>
-            </div>
-
-            <div class="design-canvas">
-                <button class="generate-button">
-                    <i class="material-icons">auto_awesome</i>
-                    Generate Design
-                </button>
-                <div class="canvas-controls">
-                    <button class="control-button"><i class="material-icons">fullscreen</i></button>
-                    <button class="control-button"><i class="material-icons">fullscreen_exit</i></button>
-                    <button class="control-button"><i class="material-icons">refresh</i></button>
-                </div>
-            </div>
-
-            <div class="brightness-control">
-                <div class="brightness-label">
-                    Brightness
-                    <span>100%</span>
-                </div>
-                <div class="brightness-slider">
-                    <div class="brightness-fill"></div>
-                </div>
-            </div>
-
-            <div class="design-insights">
-                <div class="insight-title">
-                    <i class="material-icons">lightbulb</i>
-                    Design Insights
-                </div>
-                <p>This modern living room design features clean lines and a neutral color palette with green accents. The layout maximizes space while maintaining an open, airy feel.</p>
-                <div class="insight-actions">
-                    <button class="insight-button">
-                        <i class="material-icons">auto_awesome</i>
-                        Enhance Design
-                    </button>
-                    <button class="insight-button">
-                        <i class="material-icons">chat</i>
-                        Ask AI
-                    </button>
-                </div>
             </div>
         </div>
     </div>
 
     <script>
         // Initialize variables
-        let currentView = 'initial';
-        let selectedRoom = null;
-        let selectedStyle = null;
+        let currentView = 'landing';
+        let currentSlide = 0;
+        const slides = [
+            {
+                image: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0',
+                title: 'Modern Living Room',
+                description: 'Clean lines and natural light create a perfect balance of comfort and style in this contemporary space.'
+            },
+            {
+                image: 'https://images.unsplash.com/photo-1616594039964-ae9021a400a0',
+                title: 'Minimalist Bedroom',
+                description: 'A serene retreat featuring subtle textures and a calming neutral palette.'
+            },
+            {
+                image: 'https://images.unsplash.com/photo-1556912172-45b7abe8b7e1',
+                title: 'Luxury Kitchen',
+                description: 'Where functionality meets elegance with premium finishes and smart storage solutions.'
+            }
+        ];
 
         // DOM Elements
-        const initialScreen = document.getElementById('initial-screen');
+        const landingPage = document.getElementById('landing-page');
         const chatInterface = document.getElementById('chat-interface');
-        const designView = document.getElementById('design-view');
         const chatContent = document.getElementById('chat-content');
+        const userInput = document.getElementById('user-input');
+        const portfolioShowcase = document.getElementById('portfolio-showcase');
 
-        // Event Listeners
-        document.querySelectorAll('.back-button').forEach(button => {
-            button.addEventListener('click', () => {
-                if (currentView === 'chat') {
-                    showView('initial');
-                } else if (currentView === 'design') {
-                    showView('chat');
-                }
-            });
-        });
-
-        document.querySelectorAll('.option-button').forEach(button => {
-            button.addEventListener('click', () => {
-                const room = button.getAttribute('data-room');
-                selectRoom(room);
-            });
-        });
+        // Initialize chat messages
+        const initialMessages = [
+            {
+                type: 'ai',
+                content: "Hi! I'm your personal design assistant. I'll help you create your perfect space. What type of room would you like to design?",
+                options: [
+                    { icon: '🛋️', title: 'Living Room', description: 'Social space for family and guests' },
+                    { icon: '🛏️', title: 'Bedroom', description: 'Personal retreat for rest' },
+                    { icon: '🍳', title: 'Kitchen', description: 'Heart of the home' },
+                    { icon: '🚿', title: 'Bathroom', description: 'Spa-like sanctuary' },
+                    { icon: '💼', title: 'Home Office', description: 'Productive workspace' }
+                ]
+            }
+        ];
 
         // View Management
         function showView(view) {
             currentView = view;
-            initialScreen.style.display = view === 'initial' ? 'block' : 'none';
-            chatInterface.style.display = view === 'chat' ? 'block' : 'none';
-            designView.style.display = view === 'design' ? 'block' : 'none';
+            landingPage.style.display = view === 'landing' ? 'block' : 'none';
+            chatInterface.style.display = view === 'chat' ? 'flex' : 'none';
         }
 
-        // Room Selection
-        function selectRoom(room) {
-            selectedRoom = room;
-            const buttons = document.querySelectorAll('.room-option');
-            buttons.forEach(btn => {
-                if (btn.textContent === room) {
-                    btn.classList.add('selected');
-                } else {
-                    btn.classList.remove('selected');
-                }
-            });
+        function startDesignJourney() {
+            showView('chat');
+            renderInitialMessages();
+        }
+
+        function showLandingPage() {
+            showView('landing');
+        }
+
+        // Message Rendering
+        function renderMessage(message) {
+            const messageElement = document.createElement('div');
+            messageElement.className = `message ${message.type}-message`;
             
-            // Add transition to next screen after selection
-            setTimeout(() => {
-                // Here we'll add the transition to the next screen
-                // This will be implemented in the next phase
-            }, 500);
+            let messageContent = `<p>${message.content}</p>`;
+            
+            if (message.options) {
+                messageContent += `
+                    <div class="options-grid">
+                        ${message.options.map(option => `
+                            <div class="option-card" onclick="selectOption('${option.title}')">
+                                <div class="option-icon">${option.icon}</div>
+                                <div class="option-title">${option.title}</div>
+                                <div class="option-description">${option.description}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            messageElement.innerHTML = messageContent;
+            chatContent.appendChild(messageElement);
+            chatContent.scrollTop = chatContent.scrollHeight;
         }
 
-        // Style Options
-        function showStyleOptions() {
-            const styleMessage = `
-                <div class="message ai-message">
-                    <p>Great choice! What style would you prefer for your ${selectedRoom}?</p>
-                    <div class="options-grid">
-                        <button class="option-button" data-style="modern">
-                            <div class="option-icon">🎯</div>
-                            <div class="option-title">Modern</div>
-                            <div class="option-description">Clean lines and minimal design</div>
-                        </button>
-                        <button class="option-button" data-style="traditional">
-                            <div class="option-icon">🏛️</div>
-                            <div class="option-title">Traditional</div>
-                            <div class="option-description">Classic and timeless</div>
-                        </button>
-                        <button class="option-button" data-style="scandinavian">
-                            <div class="option-icon">❄️</div>
-                            <div class="option-title">Scandinavian</div>
-                            <div class="option-description">Simple and functional</div>
-                        </button>
-                        <button class="option-button" data-style="industrial">
-                            <div class="option-icon">🏭</div>
-                            <div class="option-title">Industrial</div>
-                            <div class="option-description">Raw and urban feel</div>
+        function renderInitialMessages() {
+            chatContent.innerHTML = '';
+            initialMessages.forEach(message => renderMessage(message));
+        }
+
+        // Portfolio Showcase
+        function initializeShowcase() {
+            // Add slides
+            portfolioShowcase.innerHTML = slides.map((slide, index) => `
+                <div class="showcase-slide ${index === 0 ? 'active' : ''}" 
+                     style="background-image: url('${slide.image}?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80');">
+                    <div class="showcase-content">
+                        <h2 class="showcase-title">${slide.title}</h2>
+                        <p class="showcase-description">${slide.description}</p>
+                        <button class="cta-button" onclick="startDesignJourney()">
+                            <span class="material-icons">brush</span>
+                            Design Your Space
                         </button>
                     </div>
                 </div>
-            `;
-            chatContent.insertAdjacentHTML('beforeend', styleMessage);
+            `).join('');
+
+            // Initialize automatic slideshow
+            setInterval(nextSlide, 5000);
+        }
+
+        function nextSlide() {
+            const slides = document.querySelectorAll('.showcase-slide');
+            const dots = document.querySelectorAll('.nav-dot');
             
-            // Add event listeners to new style buttons
-            document.querySelectorAll('.option-button[data-style]').forEach(button => {
-                button.addEventListener('click', () => {
-                    selectStyle(button.getAttribute('data-style'));
-                });
-            });
+            slides[currentSlide].classList.remove('active');
+            dots[currentSlide].classList.remove('active');
+            
+            currentSlide = (currentSlide + 1) % slides.length;
+            
+            slides[currentSlide].classList.add('active');
+            dots[currentSlide].classList.add('active');
         }
 
-        // Style Selection
-        function selectStyle(style) {
-            selectedStyle = style;
-            setTimeout(() => {
-                showView('design');
-            }, 500);
-        }
-
-        function startChat() {
-            initialScreen.style.opacity = '0';
-            initialScreen.style.transition = 'opacity 0.3s ease';
-            setTimeout(() => {
-                initialScreen.style.display = 'none';
-                chatInterface.style.display = 'flex';
-                setTimeout(() => {
-                    chatInterface.style.opacity = '1';
-                }, 50);
-            }, 300);
-        }
-
-        function showInitialScreen() {
-            chatInterface.style.opacity = '0';
-            chatInterface.style.transition = 'opacity 0.3s ease';
-            setTimeout(() => {
-                chatInterface.style.display = 'none';
-                initialScreen.style.display = 'flex';
-                setTimeout(() => {
-                    initialScreen.style.opacity = '1';
-                }, 50);
-            }, 300);
-        }
-
-        // Start with initial screen
-        showInitialScreen();
+        // Initialize
+        initializeShowcase();
+        showView('landing');
     </script>
 </body>
 </html> 
