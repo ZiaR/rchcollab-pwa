@@ -13,13 +13,14 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu;
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, "SF Pro Display", "Segoe UI", Roboto, sans-serif;
         }
 
         :root {
-            --accent-color: #00E5BE;
+            --accent-color: #4CFFC9;
             --dark-bg: #0A0B0F;
             --text-color: #FFFFFF;
+            --glow: 0 0 20px rgba(76, 255, 201, 0.3);
             --glow-shadow: 0 0 20px rgba(0, 229, 190, 0.3);
             --card-bg: rgba(16, 18, 27, 0.4);
             --border-color: rgba(255, 255, 255, 0.1);
@@ -33,7 +34,6 @@
             align-items: center;
             padding: 20px;
             color: var(--text-color);
-            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu;
         }
 
         .container {
@@ -41,142 +41,139 @@
             max-width: 390px;
             height: 844px;
             background: var(--dark-bg);
-            border-radius: 40px;
+            position: relative;
             overflow: hidden;
-            position: relative;
-            box-shadow: var(--glow-shadow);
+            border-radius: 40px;
         }
 
-        .header {
-            position: relative;
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .back-button {
-            background: transparent;
-            border: none;
-            color: var(--accent-color);
-            font-size: 24px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .title {
-            font-size: 20px;
-            font-weight: 600;
-            color: var(--text-color);
-        }
-
-        .subtitle {
-            font-size: 14px;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        .chat-content {
-            padding: 20px;
-            height: calc(100% - 140px);
-            overflow-y: auto;
-        }
-
-        .message {
-            margin-bottom: 24px;
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .ai-message {
-            background: var(--card-bg);
-            padding: 16px;
-            border-radius: 16px;
-            border: 1px solid var(--border-color);
-            max-width: 80%;
-        }
-
-        .options-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            margin-top: 16px;
-        }
-
-        .option-button {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 16px;
-            color: var(--text-color);
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: left;
+        .initial-screen {
+            height: 100%;
             display: flex;
             flex-direction: column;
-            gap: 8px;
+            padding: 48px 32px;
+            position: relative;
+            background: linear-gradient(180deg, rgba(76, 255, 201, 0.05) 0%, rgba(10, 11, 15, 0) 100%);
+            opacity: 1;
+            transition: opacity 0.3s ease;
         }
 
-        .option-button:hover {
-            border-color: var(--accent-color);
-            box-shadow: var(--glow-shadow);
+        .chat-interface {
+            height: 100%;
+            display: none;
+            flex-direction: column;
+            padding: 48px 32px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         }
 
-        .option-button.selected {
-            background: var(--accent-color);
-            border-color: var(--accent-color);
-            color: var(--dark-bg);
+        .welcome-content {
+            position: relative;
+            z-index: 1;
+            margin-top: 48px;
         }
 
-        .input-bar {
+        .headline {
+            font-size: 48px;
+            font-weight: 700;
+            line-height: 1.1;
+            margin-bottom: 16px;
+            letter-spacing: -0.02em;
+        }
+
+        .v0-block {
+            font-size: 16px;
+            color: rgba(255,255,255,0.6);
+            margin-bottom: 64px;
+            font-weight: 500;
+        }
+
+        .welcome-text {
+            font-size: 64px;
+            font-weight: 700;
+            line-height: 1.1;
+            letter-spacing: -0.02em;
+        }
+
+        .controls-container {
             position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 16px;
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid var(--border-color);
+            top: 0;
+            right: 32px;
             display: flex;
-            gap: 12px;
-            align-items: center;
+            flex-direction: column;
+            gap: 24px;
+            padding-top: 48px;
+            z-index: 10;
         }
 
-        .mic-button {
-            width: 48px;
-            height: 48px;
+        .control-button {
+            width: 56px;
+            height: 56px;
             border-radius: 50%;
-            background: var(--accent-color);
             border: none;
-            color: var(--dark-bg);
-            font-size: 20px;
-            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            transition: all 0.3s;
-        }
-
-        .mic-button:hover {
-            transform: scale(1.05);
-            box-shadow: var(--glow-shadow);
-        }
-
-        .keyboard-button {
-            width: 48px;
-            height: 48px;
-            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
             background: rgba(255, 255, 255, 0.1);
-            border: 1px solid var(--border-color);
-            color: var(--text-color);
-            font-size: 20px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .control-button:hover {
+            background: rgba(255, 255, 255, 0.15);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        .control-button:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .control-button svg {
+            width: 24px;
+            height: 24px;
+            fill: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .control-button:hover svg {
+            fill: var(--accent-color);
+            transform: scale(1.1);
+        }
+
+        .room-option {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 16px;
+            padding: 20px;
             cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            transition: all 0.3s ease;
+            color: var(--text-color);
+            font-size: 16px;
+            font-weight: 500;
+            text-align: left;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .room-option:hover {
+            border-color: var(--accent-color);
+            box-shadow: var(--glow);
+            transform: translateY(-2px);
+        }
+
+        .room-option:active {
+            transform: translateY(0);
+        }
+
+        .room-option.selected {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+            color: var(--dark-bg);
+            transform: translateY(-2px);
         }
 
         .design-view {
@@ -341,6 +338,12 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+
+        @media (max-width: 390px) {
+            .container {
+                border-radius: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -352,14 +355,14 @@
                 <div class="v0-block">v0 block</div>
                 <h2 class="welcome-text">What Can I Do<br>for<br>You Today?</h2>
             </div>
-            <div class="input-controls">
-                <button class="control-button mic-button" onclick="startChat()">
+            <div class="controls-container">
+                <button class="control-button" onclick="startChat()">
                     <svg viewBox="0 0 24 24"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3z"/><path d="M17 11c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z"/></svg>
                 </button>
-                <button class="control-button action-button">
+                <button class="control-button">
                     <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/></svg>
                 </button>
-                <button class="control-button keyboard-button">
+                <button class="control-button">
                     <svg viewBox="0 0 24 24"><path d="M20 5H4c-1.1 0-1.99.9-1.99 2L2 17c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V7c0-1.1-.9-2-2-2zm-9 3h2v2h-2V8zm0 3h2v2h-2v-2zM8 8h2v2H8V8zm0 3h2v2H8v-2zm-1 2H5v-2h2v2zm0-3H5V8h2v2zm9 7H8v-2h8v2zm0-4h-2v-2h2v2zm0-3h-2V8h2v2zm3 3h-2v-2h2v2zm0-3h-2V8h2v2z"/></svg>
                 </button>
             </div>
@@ -490,16 +493,19 @@
         // Room Selection
         function selectRoom(room) {
             selectedRoom = room;
-            document.querySelectorAll('.room-option').forEach(btn => {
-                btn.classList.remove('selected');
-                if (btn.getAttribute('data-room') === room) {
+            const buttons = document.querySelectorAll('.room-option');
+            buttons.forEach(btn => {
+                if (btn.textContent === room) {
                     btn.classList.add('selected');
+                } else {
+                    btn.classList.remove('selected');
                 }
             });
             
-            // Show style options after room selection
+            // Add transition to next screen after selection
             setTimeout(() => {
-                showStyleOptions();
+                // Here we'll add the transition to the next screen
+                // This will be implemented in the next phase
             }, 500);
         }
 
@@ -551,13 +557,27 @@
         }
 
         function startChat() {
-            document.getElementById('initial-screen').style.display = 'none';
-            document.getElementById('chat-interface').style.display = 'flex';
+            initialScreen.style.opacity = '0';
+            initialScreen.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => {
+                initialScreen.style.display = 'none';
+                chatInterface.style.display = 'flex';
+                setTimeout(() => {
+                    chatInterface.style.opacity = '1';
+                }, 50);
+            }, 300);
         }
 
         function showInitialScreen() {
-            document.getElementById('initial-screen').style.display = 'flex';
-            document.getElementById('chat-interface').style.display = 'none';
+            chatInterface.style.opacity = '0';
+            chatInterface.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => {
+                chatInterface.style.display = 'none';
+                initialScreen.style.display = 'flex';
+                setTimeout(() => {
+                    initialScreen.style.opacity = '1';
+                }, 50);
+            }, 300);
         }
 
         // Start with initial screen
