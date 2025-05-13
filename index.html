@@ -365,6 +365,12 @@
         // Initialize variables
         let currentView = 'landing';
         let currentSlide = 0;
+        let userSelections = {
+            room: null,
+            style: null,
+            budget: null
+        };
+
         const slides = [
             {
                 image: 'https://images.unsplash.com/photo-1600210492486-724fe5c67fb0',
@@ -383,27 +389,47 @@
             }
         ];
 
-        // DOM Elements
-        const landingPage = document.getElementById('landing-page');
-        const chatInterface = document.getElementById('chat-interface');
-        const chatContent = document.getElementById('chat-content');
-        const userInput = document.getElementById('user-input');
-        const portfolioShowcase = document.getElementById('portfolio-showcase');
-
-        // Initialize chat messages
-        const initialMessages = [
-            {
-                type: 'ai',
-                content: "Hi! I'm your personal design assistant. I'll help you create your perfect space. What type of room would you like to design?",
+        // Chat flow configuration
+        const chatFlow = {
+            room: {
+                question: "Hi! I'm your personal design assistant. I'll help you create your perfect space. What type of room would you like to design?",
                 options: [
                     { icon: '🛋️', title: 'Living Room', description: 'Social space for family and guests' },
                     { icon: '🛏️', title: 'Bedroom', description: 'Personal retreat for rest' },
                     { icon: '🍳', title: 'Kitchen', description: 'Heart of the home' },
                     { icon: '🚿', title: 'Bathroom', description: 'Spa-like sanctuary' },
                     { icon: '💼', title: 'Home Office', description: 'Productive workspace' }
-                ]
+                ],
+                next: 'style'
+            },
+            style: {
+                question: "Great choice! What style would you prefer?",
+                options: [
+                    { icon: '🎯', title: 'Modern', description: 'Clean lines and minimal design' },
+                    { icon: '🏛️', title: 'Traditional', description: 'Classic and timeless' },
+                    { icon: '❄️', title: 'Scandinavian', description: 'Simple and functional' },
+                    { icon: '🏭', title: 'Industrial', description: 'Raw and urban feel' }
+                ],
+                next: 'budget'
+            },
+            budget: {
+                question: "What's your budget range for this project?",
+                options: [
+                    { icon: '💰', title: 'Economic', description: 'Under $10,000' },
+                    { icon: '💰💰', title: 'Mid-Range', description: '$10,000 - $30,000' },
+                    { icon: '💰💰💰', title: 'Premium', description: '$30,000 - $50,000' },
+                    { icon: '💎', title: 'Luxury', description: '$50,000+' }
+                ],
+                next: 'summary'
             }
-        ];
+        };
+
+        // DOM Elements
+        const landingPage = document.getElementById('landing-page');
+        const chatInterface = document.getElementById('chat-interface');
+        const chatContent = document.getElementById('chat-content');
+        const userInput = document.getElementById('user-input');
+        const portfolioShowcase = document.getElementById('portfolio-showcase');
 
         // View Management
         function showView(view) {
@@ -414,7 +440,7 @@
 
         function startDesignJourney() {
             showView('chat');
-            renderInitialMessages();
+            renderMessage(chatFlow.room);
         }
 
         function showLandingPage() {
@@ -422,17 +448,17 @@
         }
 
         // Message Rendering
-        function renderMessage(message) {
+        function renderMessage(message, isUser = false) {
             const messageElement = document.createElement('div');
-            messageElement.className = `message ${message.type}-message`;
+            messageElement.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
             
-            let messageContent = `<p>${message.content}</p>`;
+            let messageContent = `<p>${isUser ? message : message.question}</p>`;
             
-            if (message.options) {
+            if (!isUser && message.options) {
                 messageContent += `
                     <div class="options-grid">
                         ${message.options.map(option => `
-                            <div class="option-card" onclick="selectOption('${option.title}')">
+                            <div class="option-card" onclick="selectOption('${option.title.toLowerCase()}', '${getCurrentStep()}')">
                                 <div class="option-icon">${option.icon}</div>
                                 <div class="option-title">${option.title}</div>
                                 <div class="option-description">${option.description}</div>
@@ -447,14 +473,70 @@
             chatContent.scrollTop = chatContent.scrollHeight;
         }
 
-        function renderInitialMessages() {
-            chatContent.innerHTML = '';
-            initialMessages.forEach(message => renderMessage(message));
+        // Option Selection
+        function getCurrentStep() {
+            if (!userSelections.room) return 'room';
+            if (!userSelections.style) return 'style';
+            if (!userSelections.budget) return 'budget';
+            return 'summary';
+        }
+
+        function selectOption(choice, step) {
+            // Remove previous selection highlighting
+            document.querySelectorAll('.option-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+
+            // Add selection highlighting
+            const selectedCard = Array.from(document.querySelectorAll('.option-card')).find(
+                card => card.querySelector('.option-title').textContent.toLowerCase() === choice
+            );
+            if (selectedCard) {
+                selectedCard.classList.add('selected');
+            }
+
+            // Store the selection
+            userSelections[step] = choice;
+
+            // Show user's choice as a message
+            setTimeout(() => {
+                renderMessage(choice, true);
+            }, 300);
+
+            // Get next step
+            const nextStep = chatFlow[step].next;
+            
+            // Show next question after a delay
+            setTimeout(() => {
+                if (nextStep === 'summary') {
+                    showSummary();
+                } else {
+                    renderMessage(chatFlow[nextStep]);
+                }
+            }, 1000);
+        }
+
+        function showSummary() {
+            const summaryMessage = {
+                question: `Perfect! Here's what I understand about your project:
+                    <br><br>
+                    Room: ${userSelections.room}
+                    <br>
+                    Style: ${userSelections.style}
+                    <br>
+                    Budget: ${userSelections.budget}
+                    <br><br>
+                    I'll start generating some design ideas for you. Would you like to see the initial concepts?`,
+                options: [
+                    { icon: '✨', title: 'Show Designs', description: 'View AI-generated design concepts' },
+                    { icon: '✏️', title: 'Modify', description: 'Change any of the selections' }
+                ]
+            };
+            renderMessage(summaryMessage);
         }
 
         // Portfolio Showcase
         function initializeShowcase() {
-            // Add slides
             portfolioShowcase.innerHTML = slides.map((slide, index) => `
                 <div class="showcase-slide ${index === 0 ? 'active' : ''}" 
                      style="background-image: url('${slide.image}?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80');">
@@ -469,7 +551,6 @@
                 </div>
             `).join('');
 
-            // Initialize automatic slideshow
             setInterval(nextSlide, 5000);
         }
 
@@ -489,6 +570,25 @@
         // Initialize
         initializeShowcase();
         showView('landing');
+
+        // Event Listeners
+        document.querySelector('.send-button').addEventListener('click', () => {
+            const message = userInput.value.trim();
+            if (message) {
+                renderMessage(message, true);
+                userInput.value = '';
+            }
+        });
+
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                const message = userInput.value.trim();
+                if (message) {
+                    renderMessage(message, true);
+                    userInput.value = '';
+                }
+            }
+        });
     </script>
 </body>
 </html> 
