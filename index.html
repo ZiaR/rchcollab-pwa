@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Architecture Collaboration App - Preview</title>
+    <title>ArchCollab - Interior Design Journey</title>
     <link rel="manifest" href="/manifest.json">
     <meta name="theme-color" content="#007AFF">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -33,355 +33,309 @@
             box-shadow: 0 10px 20px rgba(0,0,0,0.1);
         }
 
-        .header {
-            padding: 16px;
-            background: white;
-            border-bottom: 1px solid #E0E0E0;
-        }
-
-        .title {
-            font-size: 24px;
-            font-weight: 600;
-            color: #000;
-            margin-bottom: 16px;
-        }
-
-        .tabs {
-            display: flex;
-            margin-top: 8px;
-        }
-
-        .tab {
-            flex: 1;
-            padding: 12px;
-            text-align: center;
-            border-bottom: 2px solid transparent;
-            cursor: pointer;
-        }
-
-        .tab.active {
-            border-bottom-color: #007AFF;
-            color: #007AFF;
-            font-weight: 600;
-        }
-
-        .content {
-            height: calc(100% - 120px);
-            overflow-y: auto;
-        }
-
-        .canvas-container {
-            padding: 16px;
-            background: #fff;
+        /* Landing Page Styles */
+        .landing-page {
             height: 100%;
+            overflow-y: auto;
+            scroll-snap-type: y mandatory;
+        }
+
+        .project-showcase {
+            height: 100%;
+            scroll-snap-align: start;
             position: relative;
         }
 
-        .canvas {
+        .project-image {
             width: 100%;
             height: 70%;
-            border: 1px solid #ccc;
-            border-radius: 12px;
+            object-fit: cover;
+            border-radius: 0;
+        }
+
+        .project-info {
+            padding: 20px;
+            background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            color: white;
+        }
+
+        .cta-button {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 16px 32px;
+            background: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,123,255,0.3);
+            transition: transform 0.2s;
+        }
+
+        .cta-button:hover {
+            transform: translateX(-50%) scale(1.05);
+        }
+
+        /* Chat Interface */
+        .chat-interface {
+            display: none;
+            height: 100%;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .message {
+            max-width: 80%;
+            margin: 8px;
+            padding: 12px;
+            border-radius: 20px;
+        }
+
+        .ai-message {
+            background: #f0f0f0;
+            margin-right: auto;
+            border-bottom-left-radius: 4px;
+        }
+
+        .user-message {
+            background: #007AFF;
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-input {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            font-size: 16px;
+        }
+
+        .chat-input button {
+            padding: 12px 24px;
+            background: #007AFF;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            font-weight: 500;
+        }
+
+        /* Design Canvas */
+        .design-canvas {
+            display: none;
+            height: 100%;
+            flex-direction: column;
+        }
+
+        .canvas-area {
+            flex: 1;
             position: relative;
             overflow: hidden;
         }
 
-        .grid {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-size: 20px 20px;
-            background-image: linear-gradient(to right, #f0f0f0 1px, transparent 1px),
-                            linear-gradient(to bottom, #f0f0f0 1px, transparent 1px);
-        }
-
-        .furniture {
-            position: absolute;
-            background: rgba(0, 122, 255, 0.4);
-            border: 1px solid #007AFF;
-            border-radius: 4px;
+        .toolbar {
+            padding: 10px;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            color: #007AFF;
-            cursor: move;
+            gap: 10px;
+            background: #f8f9fa;
+            border-top: 1px solid #eee;
         }
 
-        .controls {
-            display: flex;
-            gap: 8px;
-            margin-top: 16px;
-        }
-
-        .button {
-            padding: 8px 16px;
-            background: #007AFF;
-            color: white;
-            border-radius: 8px;
-            border: none;
-            font-size: 14px;
-            cursor: pointer;
-        }
-
-        .budget-container {
-            padding: 16px;
-        }
-
-        .budget-summary {
-            background: #F2F2F7;
+        /* Budget Tracker */
+        .budget-tracker {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px;
             border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-            display: flex;
-            justify-content: space-between;
-        }
-
-        .budget-category {
-            margin-bottom: 16px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
 
         .progress-bar {
-            height: 8px;
-            background: #E9E9EB;
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 8px 0;
+            width: 100%;
+            height: 6px;
+            background: #eee;
+            border-radius: 3px;
+            margin-top: 8px;
         }
 
         .progress-fill {
             height: 100%;
             background: #007AFF;
-            border-radius: 4px;
+            border-radius: 3px;
+            transition: width 0.3s;
         }
 
-        .recommendations-container {
-            padding: 16px;
-        }
-
-        .recommendation-card {
-            background: white;
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 16px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .color-palette {
+        /* Navigation */
+        .nav-dots {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
             gap: 8px;
-            margin: 8px 0;
         }
 
-        .color-swatch {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            border: 1px solid rgba(0,0,0,0.1);
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
         }
 
-        .confidence-bar {
-            height: 4px;
-            background: #E0E0E0;
-            border-radius: 2px;
-            overflow: hidden;
-            margin-top: 8px;
-        }
-
-        .confidence-fill {
-            height: 100%;
-            background: #34C759;
+        .dot.active {
+            background: white;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1 class="title">Design Studio</h1>
-            <div class="tabs">
-                <div class="tab active" onclick="switchTab('design')">Design</div>
-                <div class="tab" onclick="switchTab('budget')">Budget</div>
-                <div class="tab" onclick="switchTab('recommendations')">Recommendations</div>
+        <!-- Landing Page -->
+        <div class="landing-page" id="landing-page">
+            <div class="project-showcase">
+                <img src="https://source.unsplash.com/random/800x600/?modern-interior" alt="Modern Interior Design" class="project-image">
+                <div class="project-info">
+                    <h1>Transform Your Space</h1>
+                    <p>Create stunning interiors with AI-powered design assistance</p>
+                </div>
+                <button class="cta-button" onclick="startDesignJourney()">Start Your Design Journey</button>
+                <div class="nav-dots">
+                    <div class="dot active"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
             </div>
         </div>
-        
-        <div class="content">
-            <div id="design-tab" class="canvas-container">
-                <div class="canvas">
-                    <div class="grid"></div>
-                    <div class="furniture" style="width: 80px; height: 40px; left: 40px; top: 60px;">Sofa</div>
-                    <div class="furniture" style="width: 40px; height: 40px; left: 140px; top: 80px;">Chair</div>
-                    <div class="furniture" style="width: 60px; height: 30px; left: 200px; top: 70px;">Table</div>
-                </div>
-                <div class="controls">
-                    <button class="button" onclick="toggleGrid()">Toggle Grid</button>
-                    <button class="button" onclick="toggleZoom()">Zoom In/Out</button>
-                </div>
+
+        <!-- Chat Interface -->
+        <div class="chat-interface" id="chat-interface">
+            <div class="chat-messages" id="chat-messages">
+                <!-- Messages will be added here -->
             </div>
-
-            <div id="budget-tab" class="budget-container" style="display: none;">
-                <div class="budget-summary">
-                    <div>
-                        <div style="color: #666;">Total Budget</div>
-                        <div style="font-size: 18px; font-weight: 600;">$25,000</div>
-                    </div>
-                    <div>
-                        <div style="color: #666;">Status</div>
-                        <div style="font-size: 18px; font-weight: 600; color: #34C759;">Within Budget</div>
-                    </div>
-                    <div>
-                        <div style="color: #666;">Remaining</div>
-                        <div style="font-size: 18px; font-weight: 600;">$4,500</div>
-                    </div>
-                </div>
-
-                <div class="budget-category">
-                    <div style="display: flex; justify-content: space-between;">
-                        <div>Furniture</div>
-                        <div>$10,000</div>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 40%;"></div>
-                    </div>
-                </div>
-
-                <div class="budget-category">
-                    <div style="display: flex; justify-content: space-between;">
-                        <div>Decor</div>
-                        <div>$5,000</div>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 20%;"></div>
-                    </div>
-                </div>
-
-                <div class="budget-category">
-                    <div style="display: flex; justify-content: space-between;">
-                        <div>Materials</div>
-                        <div>$7,500</div>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 30%;"></div>
-                    </div>
-                </div>
-
-                <div class="budget-category">
-                    <div style="display: flex; justify-content: space-between;">
-                        <div>Labor</div>
-                        <div>$2,500</div>
-                    </div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 10%;"></div>
-                    </div>
-                </div>
-
-                <button class="button" style="width: 100%; margin-top: 16px;">Optimize Budget</button>
+            <div class="chat-input">
+                <input type="text" placeholder="Type your message..." id="user-input">
+                <button onclick="sendMessage()">Send</button>
             </div>
+        </div>
 
-            <div id="recommendations-tab" class="recommendations-container" style="display: none;">
-                <div class="recommendation-card">
-                    <h3>Harmonious Color Palette</h3>
-                    <p style="color: #666; margin: 8px 0;">Based on your preferences</p>
-                    <div class="color-palette">
-                        <div class="color-swatch" style="background: #FFFFFF;"></div>
-                        <div class="color-swatch" style="background: #000000;"></div>
-                        <div class="color-swatch" style="background: #808080;"></div>
-                        <div class="color-swatch" style="background: #A0A0A0;"></div>
-                    </div>
-                    <div class="confidence-bar">
-                        <div class="confidence-fill" style="width: 85%;"></div>
-                    </div>
-                    <div style="text-align: right; font-size: 12px; color: #666; margin-top: 4px;">85% Match</div>
-                </div>
+        <!-- Design Canvas -->
+        <div class="design-canvas" id="design-canvas">
+            <div class="canvas-area" id="canvas-area">
+                <!-- Design elements will be added here -->
+            </div>
+            <div class="toolbar">
+                <button onclick="addFurniture()">Add Furniture</button>
+                <button onclick="changeColors()">Change Colors</button>
+                <button onclick="askAI()">Ask AI</button>
+            </div>
+        </div>
 
-                <div class="recommendation-card">
-                    <h3>Modern Style Elements</h3>
-                    <p style="color: #666; margin: 8px 0;">Matches your preferences</p>
-                    <ul style="margin-left: 20px; color: #666;">
-                        <li>Clean lines</li>
-                        <li>Minimalist furniture</li>
-                        <li>Neutral color palette</li>
-                    </ul>
-                    <div class="confidence-bar">
-                        <div class="confidence-fill" style="width: 90%;"></div>
-                    </div>
-                    <div style="text-align: right; font-size: 12px; color: #666; margin-top: 4px;">90% Match</div>
-                </div>
-
-                <div class="recommendation-card">
-                    <h3>Optimal Furniture Layout</h3>
-                    <p style="color: #666; margin: 8px 0;">Maximizes space utilization and flow</p>
-                    <div style="height: 120px; background: #F5F5F5; border-radius: 8px; margin: 8px 0; display: flex; align-items: center; justify-content: center;">
-                        Layout Preview
-                    </div>
-                    <div class="confidence-bar">
-                        <div class="confidence-fill" style="width: 75%;"></div>
-                    </div>
-                    <div style="text-align: right; font-size: 12px; color: #666; margin-top: 4px;">75% Match</div>
-                </div>
+        <!-- Budget Tracker -->
+        <div class="budget-tracker" id="budget-tracker">
+            <div class="budget-info">
+                <span>Budget: $25,000</span>
+                <span>Used: $12,500</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 50%"></div>
             </div>
         </div>
     </div>
 
     <script>
-        function switchTab(tab) {
-            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-            document.querySelector(`.tab:nth-child(${tab === 'design' ? 1 : tab === 'budget' ? 2 : 3})`).classList.add('active');
-            
-            document.getElementById('design-tab').style.display = tab === 'design' ? 'block' : 'none';
-            document.getElementById('budget-tab').style.display = tab === 'budget' ? 'block' : 'none';
-            document.getElementById('recommendations-tab').style.display = tab === 'recommendations' ? 'block' : 'none';
+        // Initialize chat messages
+        const initialMessages = [
+            {
+                text: "Hi! I'm your AI design assistant. Let's create your perfect space together. What type of room would you like to design?",
+                type: "ai"
+            }
+        ];
+
+        function startDesignJourney() {
+            document.getElementById('landing-page').style.display = 'none';
+            document.getElementById('chat-interface').style.display = 'flex';
+            renderMessages(initialMessages);
         }
 
-        function toggleGrid() {
-            const grid = document.querySelector('.grid');
-            grid.style.display = grid.style.display === 'none' ? 'block' : 'none';
+        function renderMessages(messages) {
+            const chatMessages = document.getElementById('chat-messages');
+            chatMessages.innerHTML = messages.map(msg => `
+                <div class="message ${msg.type}-message">
+                    ${msg.text}
+                </div>
+            `).join('');
+            chatMessages.scrollTop = chatMessages.scrollHeight;
         }
 
-        let zoomed = false;
-        function toggleZoom() {
-            const canvas = document.querySelector('.canvas');
-            zoomed = !zoomed;
-            canvas.style.transform = zoomed ? 'scale(1.5)' : 'scale(1)';
-            canvas.style.transformOrigin = 'center';
+        function sendMessage() {
+            const input = document.getElementById('user-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const messages = Array.from(document.getElementsByClassName('message')).map(el => ({
+                text: el.textContent.trim(),
+                type: el.classList.contains('ai-message') ? 'ai' : 'user'
+            }));
+
+            messages.push({ text, type: 'user' });
+            renderMessages(messages);
+
+            // Simulate AI response
+            setTimeout(() => {
+                messages.push({
+                    text: "I understand you're interested in designing a space. Could you tell me more about your style preferences? For example, do you prefer modern, traditional, or something else?",
+                    type: 'ai'
+                });
+                renderMessages(messages);
+            }, 1000);
+
+            input.value = '';
         }
 
-        // Make furniture draggable
-        document.querySelectorAll('.furniture').forEach(el => {
-            el.addEventListener('mousedown', e => {
-                const furniture = e.target;
-                let startX = e.clientX - furniture.offsetLeft;
-                let startY = e.clientY - furniture.offsetTop;
-
-                function mousemove(e) {
-                    furniture.style.left = e.clientX - startX + 'px';
-                    furniture.style.top = e.clientY - startY + 'px';
-                }
-
-                function mouseup() {
-                    document.removeEventListener('mousemove', mousemove);
-                    document.removeEventListener('mouseup', mouseup);
-                }
-
-                document.addEventListener('mousemove', mousemove);
-                document.addEventListener('mouseup', mouseup);
-            });
+        // Handle enter key in chat
+        document.getElementById('user-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                sendMessage();
+            }
         });
 
-        // Service Worker Registration
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then(registration => {
-                        console.log('ServiceWorker registration successful');
-                    })
-                    .catch(err => {
-                        console.log('ServiceWorker registration failed: ', err);
-                    });
+        // Showcase navigation
+        let currentShowcase = 0;
+        const showcaseImages = [
+            'https://source.unsplash.com/random/800x600/?modern-interior',
+            'https://source.unsplash.com/random/800x600/?minimal-interior',
+            'https://source.unsplash.com/random/800x600/?luxury-interior'
+        ];
+
+        setInterval(() => {
+            currentShowcase = (currentShowcase + 1) % showcaseImages.length;
+            document.querySelector('.project-image').src = showcaseImages[currentShowcase];
+            document.querySelectorAll('.dot').forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentShowcase);
             });
-        }
+        }, 5000);
     </script>
 </body>
 </html> 
