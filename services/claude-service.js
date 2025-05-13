@@ -9,7 +9,7 @@ class ClaudeService {
     async generateInteriorDesign(requirements) {
         try {
             const prompt = this.constructDesignPrompt(requirements);
-            const response = await fetch(`${this.API_ENDPOINT}/images/generations`, {
+            const response = await fetch(`${this.API_ENDPOINT}/messages`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -18,9 +18,17 @@ class ClaudeService {
                 },
                 body: JSON.stringify({
                     model: 'claude-3-opus-20240229',
-                    prompt: prompt,
                     max_tokens: 4096,
-                    temperature: 0.7
+                    temperature: 0.7,
+                    messages: [{
+                        role: "user",
+                        content: [
+                            {
+                                type: "text",
+                                text: prompt
+                            }
+                        ]
+                    }]
                 })
             });
 
@@ -29,7 +37,11 @@ class ClaudeService {
             }
 
             const data = await response.json();
-            return data;
+            return {
+                images: [
+                    { url: data.content[0].image }
+                ]
+            };
         } catch (error) {
             console.error('Error generating design:', error);
             throw error;
@@ -38,8 +50,7 @@ class ClaudeService {
 
     async enhanceDesign(imageUrl, enhancementPrompt) {
         try {
-            const prompt = `Enhance this interior design: ${enhancementPrompt}`;
-            const response = await fetch(`${this.API_ENDPOINT}/images/edits`, {
+            const response = await fetch(`${this.API_ENDPOINT}/messages`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -48,10 +59,25 @@ class ClaudeService {
                 },
                 body: JSON.stringify({
                     model: 'claude-3-opus-20240229',
-                    image: imageUrl,
-                    prompt: prompt,
                     max_tokens: 4096,
-                    temperature: 0.7
+                    temperature: 0.7,
+                    messages: [{
+                        role: "user",
+                        content: [
+                            {
+                                type: "text",
+                                text: `Enhance this interior design: ${enhancementPrompt}`
+                            },
+                            {
+                                type: "image",
+                                source: {
+                                    type: "base64",
+                                    media_type: "image/jpeg",
+                                    data: await this.imageUrlToBase64(imageUrl)
+                                }
+                            }
+                        ]
+                    }]
                 })
             });
 
@@ -60,9 +86,34 @@ class ClaudeService {
             }
 
             const data = await response.json();
-            return data;
+            return {
+                images: [
+                    { url: data.content[0].image }
+                ]
+            };
         } catch (error) {
             console.error('Error enhancing design:', error);
+            throw error;
+        }
+    }
+
+    async imageUrlToBase64(url) {
+        try {
+            const response = await fetch(url);
+            const blob = await response.blob();
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onloadend = () => {
+                    const base64String = reader.result
+                        .replace('data:', '')
+                        .replace(/^.+,/, '');
+                    resolve(base64String);
+                };
+                reader.onerror = reject;
+                reader.readAsDataURL(blob);
+            });
+        } catch (error) {
+            console.error('Error converting image to base64:', error);
             throw error;
         }
     }
