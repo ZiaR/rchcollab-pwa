@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>ArchConnect AI - Interior Design Assistant</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu;
+        }
+
+        :root {
+            --accent-color: #00E5BE;
+            --dark-bg: #0A0B0F;
+            --text-color: #FFFFFF;
+            --glow-shadow: 0 0 20px rgba(0, 229, 190, 0.3);
+            --card-bg: rgba(16, 18, 27, 0.4);
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        body {
+            background: var(--dark-bg);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: var(--text-color);
+            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, Ubuntu;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 390px;
+            height: 844px;
+            background: var(--dark-bg);
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: var(--glow-shadow);
+        }
+
+        .header {
+            position: relative;
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .back-button {
+            background: transparent;
+            border: none;
+            color: var(--accent-color);
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-color);
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .chat-content {
+            padding: 20px;
+            height: calc(100% - 140px);
+            overflow-y: auto;
+        }
+
+        .message {
+            margin-bottom: 24px;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .ai-message {
+            background: var(--card-bg);
+            padding: 16px;
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+            max-width: 80%;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .option-button {
+            background: var(--card-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 16px;
+            color: var(--text-color);
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .option-button:hover {
+            border-color: var(--accent-color);
+            box-shadow: var(--glow-shadow);
+        }
+
+        .option-button.selected {
+            background: var(--accent-color);
+            border-color: var(--accent-color);
+            color: var(--dark-bg);
+        }
+
+        .input-bar {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 16px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .mic-button {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--accent-color);
+            border: none;
+            color: var(--dark-bg);
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .mic-button:hover {
+            transform: scale(1.05);
+            box-shadow: var(--glow-shadow);
+        }
+
+        .keyboard-button {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid var(--border-color);
+            color: var(--text-color);
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .design-view {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .design-header {
+            padding: 20px;
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .design-tags {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .design-tag {
+            background: var(--accent-color);
+            color: var(--dark-bg);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .design-tabs {
+            display: flex;
+            gap: 16px;
+            margin-top: 16px;
+            padding: 0 20px;
+        }
+
+        .design-tab {
+            color: rgba(255, 255, 255, 0.6);
+            padding: 8px 0;
+            border-bottom: 2px solid transparent;
+            cursor: pointer;
+        }
+
+        .design-tab.active {
+            color: var(--text-color);
+            border-bottom-color: var(--accent-color);
+        }
+
+        .design-canvas {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .generate-button {
+            background: var(--accent-color);
+            color: var(--dark-bg);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 24px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--glow-shadow);
+        }
+
+        .canvas-controls {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(16, 18, 27, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 8px;
+            border-radius: 16px;
+            display: flex;
+            gap: 8px;
+        }
+
+        .control-button {
+            width: 40px;
+            height: 40px;
+            border-radius: 12px;
+            background: rgba(255, 255, 255, 0.1);
+            border: none;
+            color: var(--text-color);
+            cursor: pointer;
+        }
+
+        .brightness-control {
+            padding: 20px;
+            background: var(--card-bg);
+        }
+
+        .brightness-slider {
+            width: 100%;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            position: relative;
+        }
+
+        .brightness-fill {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            background: var(--accent-color);
+            border-radius: 2px;
+            width: 50%;
+        }
+
+        .design-insights {
+            margin: 20px;
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: 16px;
+            border: 1px solid var(--border-color);
+        }
+
+        .insight-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            color: var(--accent-color);
+        }
+
+        .insight-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+        }
+
+        .insight-button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            border: 1px solid var(--accent-color);
+            background: transparent;
+            color: var(--accent-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.3s;
+        }
+
+        .insight-button:hover {
+            background: var(--accent-color);
+            color: var(--dark-bg);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Initial Screen -->
+        <div class="initial-screen" id="initial-screen">
+            <div class="content">
+                <h1>I can design your dream space</h1>
+                <div class="v0-block">v0 block</div>
+                <h2 class="welcome-text">What Can I Do<br>for<br>You Today?</h2>
+                <div class="voice-indicator"></div>
+                <div class="input-controls">
+                    <button class="mic-button"><i class="material-icons">mic</i></button>
+                    <button class="action-button"><i class="material-icons">radio_button_checked</i></button>
+                    <button class="keyboard-button"><i class="material-icons">keyboard</i></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Chat Interface -->
+        <div class="chat-interface" id="chat-interface" style="display: none;">
+            <header class="header">
+                <button class="back-button">
+                    <i class="material-icons">arrow_back</i>
+                </button>
+                <div class="header-content">
+                    <div class="title">ArchConnect AI</div>
+                    <div class="subtitle">Interior Design Assistant</div>
+                </div>
+            </header>
+
+            <div class="chat-content" id="chat-content">
+                <div class="message ai-message">
+                    <p>Hi! I'm your ArchConnect AI assistant. I'll help you design your dream interior. What room would you like to start with?</p>
+                    <div class="options-grid">
+                        <button class="option-button" data-room="living">
+                            <div class="option-icon">🛋️</div>
+                            <div class="option-title">Living Room</div>
+                        </button>
+                        <button class="option-button" data-room="bedroom">
+                            <div class="option-icon">🛏️</div>
+                            <div class="option-title">Bedroom</div>
+                        </button>
+                        <button class="option-button" data-room="kitchen">
+                            <div class="option-icon">🍳</div>
+                            <div class="option-title">Kitchen</div>
+                        </button>
+                        <button class="option-button" data-room="bathroom">
+                            <div class="option-icon">🚿</div>
+                            <div class="option-title">Bathroom</div>
+                        </button>
+                        <button class="option-button" data-room="office">
+                            <div class="option-icon">💼</div>
+                            <div class="option-title">Office</div>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="input-bar">
+                <button class="mic-button">
+                    <i class="material-icons">mic</i>
+                </button>
+                <input type="text" placeholder="Type your message..." class="message-input">
+                <button class="keyboard-button">
+                    <i class="material-icons">send</i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Design Visualization -->
+        <div class="design-view" id="design-view" style="display: none;">
+            <header class="design-header">
+                <button class="back-button">
+                    <i class="material-icons">arrow_back</i>
+                </button>
+                <h1 class="title">Design Visualization</h1>
+                <div class="design-tags">
+                    <span class="design-tag">Modern</span>
+                    <span class="design-tag">Living Room</span>
+                </div>
+            </header>
+
+            <div class="design-tabs">
+                <div class="design-tab active">View</div>
+                <div class="design-tab">Furniture</div>
+                <div class="design-tab">Materials</div>
+            </div>
+
+            <div class="design-canvas">
+                <button class="generate-button">
+                    <i class="material-icons">auto_awesome</i>
+                    Generate Design
+                </button>
+                <div class="canvas-controls">
+                    <button class="control-button"><i class="material-icons">fullscreen</i></button>
+                    <button class="control-button"><i class="material-icons">fullscreen_exit</i></button>
+                    <button class="control-button"><i class="material-icons">refresh</i></button>
+                </div>
+            </div>
+
+            <div class="brightness-control">
+                <div class="brightness-label">
+                    Brightness
+                    <span>100%</span>
+                </div>
+                <div class="brightness-slider">
+                    <div class="brightness-fill"></div>
+                </div>
+            </div>
+
+            <div class="design-insights">
+                <div class="insight-title">
+                    <i class="material-icons">lightbulb</i>
+                    Design Insights
+                </div>
+                <p>This modern living room design features clean lines and a neutral color palette with green accents. The layout maximizes space while maintaining an open, airy feel.</p>
+                <div class="insight-actions">
+                    <button class="insight-button">
+                        <i class="material-icons">auto_awesome</i>
+                        Enhance Design
+                    </button>
+                    <button class="insight-button">
+                        <i class="material-icons">chat</i>
+                        Ask AI
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize variables
+        let currentView = 'initial';
+        let selectedRoom = null;
+        let selectedStyle = null;
+
+        // DOM Elements
+        const initialScreen = document.getElementById('initial-screen');
+        const chatInterface = document.getElementById('chat-interface');
+        const designView = document.getElementById('design-view');
+        const chatContent = document.getElementById('chat-content');
+
+        // Event Listeners
+        document.querySelectorAll('.back-button').forEach(button => {
+            button.addEventListener('click', () => {
+                if (currentView === 'chat') {
+                    showView('initial');
+                } else if (currentView === 'design') {
+                    showView('chat');
+                }
+            });
+        });
+
+        document.querySelectorAll('.option-button').forEach(button => {
+            button.addEventListener('click', () => {
+                const room = button.getAttribute('data-room');
+                selectRoom(room);
+            });
+        });
+
+        // View Management
+        function showView(view) {
+            currentView = view;
+            initialScreen.style.display = view === 'initial' ? 'block' : 'none';
+            chatInterface.style.display = view === 'chat' ? 'block' : 'none';
+            designView.style.display = view === 'design' ? 'block' : 'none';
+        }
+
+        // Room Selection
+        function selectRoom(room) {
+            selectedRoom = room;
+            document.querySelectorAll('.option-button').forEach(btn => {
+                btn.classList.remove('selected');
+                if (btn.getAttribute('data-room') === room) {
+                    btn.classList.add('selected');
+                }
+            });
+            
+            // Show style options after room selection
+            setTimeout(() => {
+                showStyleOptions();
+            }, 500);
+        }
+
+        // Style Options
+        function showStyleOptions() {
+            const styleMessage = `
+                <div class="message ai-message">
+                    <p>Great choice! What style would you prefer for your ${selectedRoom}?</p>
+                    <div class="options-grid">
+                        <button class="option-button" data-style="modern">
+                            <div class="option-icon">🎯</div>
+                            <div class="option-title">Modern</div>
+                            <div class="option-description">Clean lines and minimal design</div>
+                        </button>
+                        <button class="option-button" data-style="traditional">
+                            <div class="option-icon">🏛️</div>
+                            <div class="option-title">Traditional</div>
+                            <div class="option-description">Classic and timeless</div>
+                        </button>
+                        <button class="option-button" data-style="scandinavian">
+                            <div class="option-icon">❄️</div>
+                            <div class="option-title">Scandinavian</div>
+                            <div class="option-description">Simple and functional</div>
+                        </button>
+                        <button class="option-button" data-style="industrial">
+                            <div class="option-icon">🏭</div>
+                            <div class="option-title">Industrial</div>
+                            <div class="option-description">Raw and urban feel</div>
+                        </button>
+                    </div>
+                </div>
+            `;
+            chatContent.insertAdjacentHTML('beforeend', styleMessage);
+            
+            // Add event listeners to new style buttons
+            document.querySelectorAll('.option-button[data-style]').forEach(button => {
+                button.addEventListener('click', () => {
+                    selectStyle(button.getAttribute('data-style'));
+                });
+            });
+        }
+
+        // Style Selection
+        function selectStyle(style) {
+            selectedStyle = style;
+            setTimeout(() => {
+                showView('design');
+            }, 500);
+        }
+
+        // Start with initial screen
+        showView('initial');
+    </script>
+</body>
+</html> 
